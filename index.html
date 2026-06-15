@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>FlyerGenius – Brief flyer IA pour commerçants francophones</title>
+<meta name="description" content="Générez un brief créatif complet pour votre flyer en 30 secondes. Titre, palette, arguments, prompt image. Adapté aux marchés FR MA DZ TN BE CA."/>
+<meta property="og:title" content="FlyerGenius – Brief flyer IA en 30 secondes"/>
+<meta property="og:description" content="Restaurant, kebab, barbershop, fitness. Ramadan, été, fêtes. Brief complet + prompt Midjourney inclus."/>
+<meta property="og:type" content="website"/>
+<meta name="keywords" content="flyer kebab gratuit,brief flyer restaurant,flyer ramadan,brief barbershop maroc,flyer professionnel IA,créer flyer gratuit"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#09090F;--card:#111118;--card2:#0E0E16;--border:#1C1C28;
+  --red:#FF3030;--yellow:#FFE500;--orange:#FF6B20;--green:#2ECC71;
+  --cream:#F0EDE8;--muted:#5A5A6E;--muted2:#3A3A4E;
+  --ramadan:#1A472A;--ramadan-acc:#2ECC71;
+  --ete:#1A3A47;--ete-acc:#00B4D8;
+  --fetes:#2A1A1A;--fetes-acc:#FF3030;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--cream);font-family:'Inter',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px}
+
+/* MODAL SETUP */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.modal-box{background:#111118;border:1px solid var(--border);border-radius:20px;padding:40px;max-width:480px;width:90%;animation:fadeUp .3s ease}
+.modal-box h2{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;color:var(--cream);margin-bottom:10px}
+.modal-box p{color:var(--muted);font-size:14px;line-height:1.65;margin-bottom:24px}
+.modal-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--cream);font-size:14px;outline:none;font-family:'JetBrains Mono',monospace;margin-bottom:16px}
+.modal-input:focus{border-color:rgba(255,48,48,.5)}
+.modal-link{color:var(--red);font-size:13px;text-decoration:none;display:block;margin-bottom:20px}
+.modal-link:hover{text-decoration:underline}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(9,9,15,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:58px}
+.logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--cream)}
+.logo-acc{color:var(--red)}
+.nav-r{display:flex;gap:20px;align-items:center}
+.nav-link{color:var(--muted);font-size:13px;cursor:pointer;transition:color .2s;text-decoration:none}
+.nav-link:hover{color:var(--cream)}
+.btn-key{background:transparent;border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:7px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.btn-key:hover{border-color:var(--muted2);color:var(--cream)}
+
+/* HERO */
+.hero{min-height:100vh;padding-top:58px;display:flex;align-items:center;background:radial-gradient(ellipse at 65% 55%,rgba(100,0,0,.2) 0%,var(--bg) 65%);position:relative;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:52px 52px;opacity:.22}
+.hero-inner{max-width:1140px;margin:0 auto;padding:0 28px;display:flex;gap:48px;align-items:center;width:100%;position:relative}
+.hero-left{flex:1;max-width:530px}
+.badge-live{display:inline-flex;align-items:center;gap:7px;background:rgba(255,48,48,.1);border:1px solid rgba(255,48,48,.28);border-radius:100px;padding:5px 14px;margin-bottom:26px}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 2s infinite}
+.badge-live span{font-size:12px;color:var(--red);font-weight:600}
+h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(40px,5.5vw,66px);line-height:1.06;color:var(--cream);margin-bottom:20px;letter-spacing:-1.5px}
+.grad{background:linear-gradient(130deg,#FF3030,#FF6B20,#FFE500);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:17px;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:420px}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap}
+.btn-p{background:var(--red);color:#fff;border:none;padding:14px 26px;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.btn-p:hover{background:#E02828;transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,48,48,.3)}
+.btn-g{background:transparent;color:var(--cream);border:1px solid var(--border);padding:14px 22px;border-radius:10px;font-weight:500;font-size:15px;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.btn-g:hover{border-color:var(--muted2);background:#111118}
+.hero-stats{display:flex;gap:24px;margin-top:30px;flex-wrap:wrap}
+.hstat{color:var(--muted);font-size:13px}
+
+/* FLYER MOCKUPS */
+.flyers{flex:1;position:relative;height:480px;display:flex;align-items:center;justify-content:center}
+.fcard{position:absolute;border-radius:14px;box-shadow:0 28px 70px rgba(0,0,0,.65);padding:20px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(255,255,255,.07)}
+.fc-tag{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:7px}
+.fc-title{font-family:'Syne',sans-serif;font-weight:800;line-height:1.15}
+.fc-cta{border-radius:7px;padding:9px 12px;text-align:center;font-weight:700;font-size:11px}
+.fc1{width:168px;height:228px;background:linear-gradient(155deg,#B01414,#6A0000);top:50px;left:10px;animation:floatA 6.5s ease-in-out infinite}
+.fc2{width:192px;height:256px;background:linear-gradient(155deg,#0C0C14,#18183A);top:20px;left:50%;transform:translateX(-50%);border-color:rgba(255,48,48,.25)!important;animation:floatC 7.5s ease-in-out infinite;z-index:2}
+.fc3{width:162px;height:216px;background:linear-gradient(155deg,#083818,#145A2A);top:66px;right:10px;animation:floatB 8s ease-in-out infinite}
+.hero-glow{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(255,48,48,.09),transparent 70%);pointer-events:none}
+
+/* SECTIONS */
+section{padding:76px 28px;border-top:1px solid var(--border)}
+.sec-in{max-width:960px;margin:0 auto}
+.sec-label{font-size:11px;color:var(--red);font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:13px}
+h2{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(26px,3.5vw,36px);color:var(--cream);margin-bottom:44px}
+
+/* HOW */
+#how{background:var(--card2)}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.how-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;position:relative}
+.how-num{position:absolute;top:16px;right:18px;font-family:'Syne',sans-serif;font-weight:800;font-size:40px;color:#1C1C28}
+.how-ico{font-size:32px;margin-bottom:14px;display:block}
+.how-card h3{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;color:var(--cream);margin-bottom:8px}
+.how-card p{color:var(--muted);font-size:13px;line-height:1.65}
+
+/* GENERATOR */
+#generator{background:var(--bg)}
+.gen-block{margin-bottom:28px}
+.gen-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--cream);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.gen-step{width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* SEASONAL */
+.season-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px}
+.season-btn{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .2s;font-family:'Inter',sans-serif}
+.season-btn:hover{border-color:var(--muted2);color:var(--cream)}
+.season-btn.active-normal{background:rgba(255,48,48,.1);border-color:var(--red);color:var(--red)}
+.season-btn.active-ramadan{background:rgba(46,204,113,.1);border-color:#2ECC71;color:#2ECC71}
+.season-btn.active-ete{background:rgba(0,180,216,.1);border-color:#00B4D8;color:#00B4D8}
+.season-btn.active-fetes{background:rgba(255,48,48,.1);border-color:var(--red);color:var(--red)}
+.season-btn.active-aid{background:rgba(46,204,113,.1);border-color:#2ECC71;color:#2ECC71}
+.season-btn.active-rentree{background:rgba(255,165,0,.1);border-color:orange;color:orange}
+
+/* TYPES */
+.types-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px}
+.type-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center;cursor:pointer;transition:all .2s;user-select:none}
+.type-card:hover{transform:translateY(-3px);border-color:rgba(255,48,48,.45);background:#16161F}
+.type-card.active{background:rgba(255,48,48,.1);border-color:var(--red)}
+.type-ico{font-size:26px;margin-bottom:7px;display:block}
+.type-lbl{font-size:12px;font-weight:600;color:var(--cream);margin-bottom:3px}
+.type-sub{font-size:10px;color:var(--muted)}
+
+/* FORMAT */
+.fmt-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.fmt-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .2s;user-select:none;display:flex;align-items:center;gap:10px}
+.fmt-card:hover{border-color:rgba(255,48,48,.4)}
+.fmt-card.active{background:rgba(255,48,48,.08);border-color:var(--red)}
+.fmt-ico{font-size:22px;flex-shrink:0}
+.fmt-name{font-size:13px;font-weight:600;color:var(--cream);margin-bottom:2px}
+.fmt-dim{font-size:10px;color:var(--muted)}
+
+/* FORM */
+.form-box{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:30px;animation:fadeUp .3s ease}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+label{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-bottom:8px}
+input,select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--cream);font-size:14px;outline:none;transition:border-color .2s;font-family:'Inter',sans-serif}
+input:focus,select:focus{border-color:rgba(255,48,48,.5)}
+input::placeholder{color:var(--muted)}
+select option{background:#111118}
+.btn-gen{width:100%;background:var(--red);color:#fff;border:none;padding:14px;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;margin-top:4px}
+.btn-gen:hover{background:#E02828;transform:translateY(-1px)}
+.btn-gen:disabled{background:var(--muted2);cursor:not-allowed;transform:none}
+.err{background:rgba(255,48,48,.08);border:1px solid rgba(255,48,48,.25);border-radius:8px;padding:10px 14px;color:var(--red);font-size:13px;margin-top:12px;display:none}
+
+/* LOADING */
+.shimmer{background:linear-gradient(90deg,#1C1C28 25%,#242430 50%,#1C1C28 75%);background-size:200% auto;animation:shimmer 1.4s linear infinite;border-radius:8px}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid var(--red);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+
+/* RESULT */
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;animation:fadeUp .4s ease}
+.r-header{padding:34px 34px 26px;border-bottom:1px solid var(--border)}
+.r-meta{font-size:10px;color:rgba(255,255,255,.32);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.r-title{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--cream);line-height:1.2;margin-bottom:10px}
+.r-sub{font-size:15px;color:rgba(240,237,232,.65);line-height:1.5}
+.r-body{padding:34px;display:grid;grid-template-columns:1fr 1fr;gap:34px}
+.rs{margin-bottom:24px}
+.rs-lbl{font-size:10px;color:var(--red);font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:12px}
+.arg-item{display:flex;gap:9px;align-items:flex-start;margin-bottom:8px}
+.arg-ck{width:17px;height:17px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:8px;color:#fff;font-weight:700}
+.arg-txt{color:var(--cream);font-size:14px;line-height:1.5}
+.offer-box{background:rgba(255,229,0,.07);border:1px solid rgba(255,229,0,.18);border-radius:9px;padding:12px 15px;color:var(--yellow);font-weight:600;font-size:14px}
+.cta-pill{background:var(--red);border-radius:8px;padding:10px 18px;display:inline-block;color:#fff;font-weight:700;font-size:14px}
+.accroche-box{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:13px 15px;font-size:13px;color:var(--cream);line-height:1.65}
+.swatch-row{display:flex;align-items:center;gap:13px;margin-bottom:11px}
+.swatch{width:44px;height:44px;border-radius:9px;flex-shrink:0;border:2px solid rgba(255,255,255,.08)}
+.swatch-hex{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cream);font-weight:500}
+.swatch-info{font-size:11px;color:var(--muted);margin-top:2px}
+.tone-pill{display:inline-flex;background:rgba(255,48,48,.09);border:1px solid rgba(255,48,48,.25);border-radius:7px;padding:7px 13px;color:var(--red);font-weight:600;font-size:13px}
+.prompt-box{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#A0E8B0;line-height:1.7;word-break:break-all}
+.conseils-list{list-style:none}
+.conseils-list li{display:flex;gap:8px;font-size:13px;color:var(--muted);margin-bottom:8px;line-height:1.5}
+.conseils-list li::before{content:"→";color:var(--orange);flex-shrink:0}
+.r-actions{border-top:1px solid var(--border);padding:18px 34px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn-sm{padding:9px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.btn-dark{background:#1C1C28;color:var(--cream);border:1px solid #2A2A38}
+.btn-dark:hover{background:#22222E}
+.btn-muted{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-muted:hover{color:var(--cream)}
+.btn-red{background:var(--red);color:#fff;border:none;font-weight:600;margin-left:auto}
+.btn-red:hover{background:#E02828}
+.btn-wa{background:#25D366;color:#fff;border:none;font-weight:600}
+.btn-wa:hover{background:#20BD5A}
+
+/* TESTIMONIALS */
+#temoignages{background:var(--card2)}
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.testi-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px}
+.stars{color:var(--yellow);font-size:12px;margin-bottom:12px;letter-spacing:2px}
+.testi-txt{color:var(--cream);font-size:13px;line-height:1.7;margin-bottom:16px}
+.testi-name{font-weight:600;color:var(--cream);font-size:13px}
+.testi-role{color:var(--muted);font-size:11px;margin-top:3px}
+
+/* PRICING */
+#tarifs{background:var(--bg)}
+.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.price-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px;position:relative}
+.price-card.hl{background:rgba(255,48,48,.05);border-color:rgba(255,48,48,.35)}
+.price-badge{position:absolute;top:-10px;right:20px;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:4px 11px;border-radius:100px}
+.price-name{font-size:13px;color:var(--muted);margin-bottom:8px}
+.price-amt{display:flex;align-items:baseline;gap:4px;margin-bottom:18px}
+.price-main{font-family:'Syne',sans-serif;font-weight:800;font-size:32px;color:var(--cream)}
+.price-per{color:var(--muted);font-size:13px}
+.price-f{display:flex;gap:9px;align-items:center;margin-bottom:8px;font-size:13px;color:var(--cream)}
+.ck-g{color:var(--green)}
+.ck-r{color:var(--red)}
+.price-btn{width:100%;padding:11px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;margin-top:20px;transition:all .2s}
+.pb-solid{background:var(--red);color:#fff;border:none}
+.pb-solid:hover{background:#E02828}
+.pb-outline{background:transparent;color:var(--cream);border:1px solid #2A2A38}
+.pb-outline:hover{background:#16161F}
+
+/* FOOTER */
+footer{background:#060609;padding:32px 28px;border-top:1px solid var(--border)}
+.foot-in{max-width:1140px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+.foot-links{display:flex;gap:20px;flex-wrap:wrap}
+.foot-l{color:var(--muted);font-size:12px;cursor:pointer;transition:color .2s}
+.foot-l:hover{color:var(--cream)}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;z-index:999;background:#1C1C28;border:1px solid var(--border);border-radius:9px;padding:11px 17px;color:var(--cream);font-size:13px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,.5);transform:translateY(70px);opacity:0;transition:all .3s ease;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ANIMS */
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+@keyframes floatA{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-15px) rotate(-5deg)}}
+@keyframes floatB{0%,100%{transform:translateY(-5px) rotate(4deg)}50%{transform:translateY(10px) rotate(4deg)}}
+@keyframes floatC{0%,100%{transform:translateX(-50%) translateY(3px) rotate(-1.5deg)}50%{transform:translateX(-50%) translateY(-11px) rotate(-1.5deg)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:700px){
+  .hero-inner{flex-direction:column;padding:24px 20px}
+  .flyers{display:none}
+  h2{margin-bottom:28px}
+  .form-row{grid-template-columns:1fr}
+  .r-body{grid-template-columns:1fr}
+  .r-actions{gap:8px}
+  .btn-red{margin-left:0}
+  .nav-link{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- MODAL API KEY -->
+<div class="modal-overlay" id="setup-modal">
+  <div class="modal-box">
+    <div style="font-size:28px;margin-bottom:12px">⚡</div>
+    <h2>Clé API Anthropic</h2>
+    <p>FlyerGenius utilise Claude pour générer vos briefs. Entrez votre clé API pour commencer. Elle est stockée localement dans votre navigateur.</p>
+    <input class="modal-input" id="api-key-input" type="password" placeholder="sk-ant-api03-..."/>
+    <a class="modal-link" href="https://console.anthropic.com/settings/keys" target="_blank">→ Obtenir ma clé sur console.anthropic.com</a>
+    <button class="btn-p" onclick="saveKey()" style="width:100%">Commencer →</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div style="display:flex;align-items:center;gap:7px">
+    <span style="font-size:19px">⚡</span>
+    <span class="logo-text">Flyer<span class="logo-acc">Genius</span></span>
+  </div>
+  <div class="nav-r">
+    <a href="#how" class="nav-link">Comment ça marche</a>
+    <a href="#tarifs" class="nav-link">Tarifs</a>
+    <button class="btn-key" onclick="changeKey()">🔑 Clé API</button>
+    <button class="btn-p" onclick="goto('generator')" style="padding:8px 16px;font-size:13px">Créer mon brief →</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="badge-live">
+        <span class="badge-dot"></span>
+        <span>IA Active · Brief en 30 secondes</span>
+      </div>
+      <h1>Des flyers qui<br/><span class="grad">font vendre.</span></h1>
+      <p class="hero-sub">L'IA génère votre brief créatif complet : titre, arguments, palette, prompt image. Adapté aux marchés FR MA DZ TN BE CA. Ramadan, été, fêtes inclus.</p>
+      <div class="hero-ctas">
+        <button class="btn-p" onclick="goto('generator')">Générer mon brief gratuit →</button>
+        <button class="btn-g" onclick="goto('temoignages')">Voir les résultats</button>
+      </div>
+      <div class="hero-stats">
+        <span class="hstat">🇫🇷🇲🇦🇩🇿🇹🇳 6 pays</span>
+        <span class="hstat">⚡ 30 sec</span>
+        <span class="hstat">🌙 Mode Ramadan</span>
+        <span class="hstat">🎨 Prompt image inclus</span>
+      </div>
+    </div>
+    <div class="flyers">
+      <div class="fcard fc1">
+        <div>
+          <div class="fc-tag">Offre Ramadan</div>
+          <div class="fc-title" style="font-size:21px;color:#FFE500">Iftar<br/>à 12€</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:8px">Menu complet + dessert</div>
+        </div>
+        <div class="fc-cta" style="background:#FFE500;color:#0A0A0F">CE SOIR !</div>
+      </div>
+      <div class="fcard fc2">
+        <div>
+          <div class="fc-tag" style="color:#FF3030">Premium Barbershop</div>
+          <div class="fc-title" style="font-size:23px;color:var(--cream)">Coupe +<br/>Barbe</div>
+          <div style="margin-top:12px;font-size:12px;color:var(--muted);line-height:1.8">✦ Rasage classique<br/>✦ Produits premium<br/>✦ Sur rendez-vous</div>
+          <div style="margin-top:10px;font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--cream)">25€</div>
+        </div>
+        <div class="fc-cta" style="background:var(--red);color:#fff">Réserver →</div>
+      </div>
+      <div class="fcard fc3">
+        <div>
+          <div class="fc-tag">Nouveau Menu</div>
+          <div class="fc-title" style="font-size:18px;color:var(--cream)">Brunch<br/>Dimanche</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:7px">Buffet à volonté</div>
+          <div style="margin-top:7px;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--yellow)">19,90€</div>
+        </div>
+        <div class="fc-cta" style="background:var(--cream);color:#083818">RÉSERVEZ !</div>
+      </div>
+      <div class="hero-glow"></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="sec-in" style="text-align:center">
+    <div class="sec-label">Comment ça marche</div>
+    <h2>Brief pro en 3 clics</h2>
+    <div class="how-grid">
+      <div class="how-card">
+        <span class="how-num">01</span>
+        <span class="how-ico">🎯</span>
+        <h3>Activité + saison</h3>
+        <p>Restaurant, kebab, barbershop… et le contexte : Ramadan, été, fêtes. L'IA adapte tout.</p>
+      </div>
+      <div class="how-card">
+        <span class="how-num">02</span>
+        <span class="how-ico">✍️</span>
+        <h3>Nom + format</h3>
+        <p>Le nom de votre commerce, votre pays, et le format souhaité : print A5, Instagram Story, WhatsApp…</p>
+      </div>
+      <div class="how-card">
+        <span class="how-num">03</span>
+        <span class="how-ico">⚡</span>
+        <h3>Brief complet + prompt image</h3>
+        <p>Titre, arguments, CTA, palette hex, accroche Instagram et prompt Midjourney/Firefly ready-to-paste.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GENERATOR -->
+<section id="generator">
+  <div class="sec-in">
+    <div style="text-align:center">
+      <div class="sec-label">Générateur IA</div>
+      <h2>Créez votre brief maintenant</h2>
+    </div>
+
+    <!-- SEASONAL -->
+    <div class="gen-block">
+      <div class="gen-label">Contexte saisonnier</div>
+      <div class="season-row" id="season-row">
+        <button class="season-btn active-normal" data-s="normal" onclick="setSeason(this,'normal')">☀️ Normal</button>
+        <button class="season-btn" data-s="ramadan" onclick="setSeason(this,'ramadan')">🌙 Ramadan</button>
+        <button class="season-btn" data-s="aid-fitr" onclick="setSeason(this,'aid-fitr')">🌟 Aïd el-Fitr</button>
+        <button class="season-btn" data-s="aid-adha" onclick="setSeason(this,'aid-adha')">🐑 Aïd el-Adha</button>
+        <button class="season-btn" data-s="ete" onclick="setSeason(this,'ete')">🏖️ Été</button>
+        <button class="season-btn" data-s="rentree" onclick="setSeason(this,'rentree')">📚 Rentrée</button>
+        <button class="season-btn" data-s="fetes" onclick="setSeason(this,'fetes')">🎄 Fêtes</button>
+      </div>
+    </div>
+
+    <!-- TYPES -->
+    <div class="gen-block">
+      <div class="gen-label"><span class="gen-step">1</span> Mon type de commerce</div>
+      <div class="types-grid" id="types-grid"></div>
+    </div>
+
+    <!-- FORMAT -->
+    <div class="gen-block" id="fmt-block" style="display:none">
+      <div class="gen-label"><span class="gen-step">2</span> Format de sortie</div>
+      <div class="fmt-row" id="fmt-row"></div>
+    </div>
+
+    <!-- FORM -->
+    <div class="form-box" id="form-box" style="display:none">
+      <div class="gen-label" style="margin-bottom:20px"><span class="gen-step">3</span> Votre commerce</div>
+      <div class="form-row">
+        <div>
+          <label>Nom du commerce</label>
+          <input id="biz-name" placeholder="Ex: Le Sultan Kebab, BarberKing…" autocomplete="off"/>
+        </div>
+        <div>
+          <label>Pays</label>
+          <select id="country-sel"></select>
+        </div>
+      </div>
+      <button class="btn-gen" id="gen-btn" onclick="generate()" disabled>⚡ Générer mon brief créatif</button>
+      <div class="err" id="err"></div>
+    </div>
+
+    <!-- LOADING -->
+    <div id="loading" style="display:none;margin-top:22px">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:18px;color:var(--muted);font-size:14px">
+        <div class="spin"></div> L'IA génère votre brief personnalisé…
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="shimmer" style="height:18px;width:70%"></div>
+        <div class="shimmer" style="height:14px;width:52%"></div>
+        <div class="shimmer" style="height:14px;width:62%"></div>
+        <div class="shimmer" style="height:14px;width:38%"></div>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="result" style="display:none;margin-top:8px"></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="temoignages">
+  <div class="sec-in" style="text-align:center">
+    <div class="sec-label">Ils nous font confiance</div>
+    <h2>Des briefs qui convertissent</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p class="testi-txt">« Le brief Ramadan était parfait pour notre promo iftar. Mes ventes ont explosé cette année par rapport à l'an dernier. »</p>
+        <div class="testi-name">Ahmed B.</div><div class="testi-role">Le Sultan Kebab · Lyon</div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p class="testi-txt">« Je transmets le brief + prompt image à mon graphiste. En 2 heures, le flyer est prêt. Fini les allers-retours à 200€. »</p>
+        <div class="testi-name">Fatima K.</div><div class="testi-role">Nails & Beauty · Paris</div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p class="testi-txt">« Le format WhatsApp était exactement ce qu'il me fallait pour toucher mes clients. Les arguments générés sont toujours percutants. »</p>
+        <div class="testi-name">Mehdi R.</div><div class="testi-role">Barbershop King · Bruxelles</div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p class="testi-txt">« Le seul outil qui comprend vraiment les marchés franco-maghrébins. Ton, couleurs, offres : tout est adapté à notre clientèle. »</p>
+        <div class="testi-name">Sophia L.</div><div class="testi-role">La Médina · Casablanca</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="tarifs">
+  <div class="sec-in" style="text-align:center">
+    <div class="sec-label">Tarifs</div>
+    <h2>Commencez gratuitement</h2>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-name">Gratuit</div>
+        <div class="price-amt"><span class="price-main">0€</span><span class="price-per">/mois</span></div>
+        <div class="price-f"><span class="ck-g">✓</span>3 briefs par mois</div>
+        <div class="price-f"><span class="ck-g">✓</span>3 types de commerce</div>
+        <div class="price-f"><span class="ck-g">✓</span>Export texte</div>
+        <div class="price-f" style="color:var(--muted)"><span>✕</span>Mode Ramadan/saisonnier</div>
+        <div class="price-f" style="color:var(--muted)"><span>✕</span>Prompt Midjourney</div>
+        <button class="price-btn pb-outline" onclick="goto('generator')">Commencer gratuit</button>
+      </div>
+      <div class="price-card hl">
+        <div class="price-badge">POPULAIRE</div>
+        <div class="price-name">Pro</div>
+        <div class="price-amt"><span class="price-main">9,90€</span><span class="price-per">/mois</span></div>
+        <div class="price-f"><span class="ck-r">✓</span>Briefs illimités</div>
+        <div class="price-f"><span class="ck-r">✓</span>10 types · 5 formats</div>
+        <div class="price-f"><span class="ck-r">✓</span>Mode saisonnier complet</div>
+        <div class="price-f"><span class="ck-r">✓</span>Prompt Midjourney inclus</div>
+        <div class="price-f"><span class="ck-r">✓</span>6 pays francophones</div>
+        <div class="price-f"><span class="ck-r">✓</span>Export PDF + partage WhatsApp</div>
+        <button class="price-btn pb-solid">7 jours gratuits →</button>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Business</div>
+        <div class="price-amt"><span class="price-main">24,90€</span><span class="price-per">/mois</span></div>
+        <div class="price-f"><span class="ck-g">✓</span>Tout Pro inclus</div>
+        <div class="price-f"><span class="ck-g">✓</span>Multi-établissements</div>
+        <div class="price-f"><span class="ck-g">✓</span>Marque blanche</div>
+        <div class="price-f"><span class="ck-g">✓</span>Accès API direct</div>
+        <div class="price-f"><span class="ck-g">✓</span>Manager dédié</div>
+        <button class="price-btn pb-outline">Nous contacter</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-in">
+    <div style="display:flex;align-items:center;gap:7px">
+      <span style="font-size:17px">⚡</span>
+      <span class="logo-text" style="font-size:15px">Flyer<span class="logo-acc">Genius</span></span>
+    </div>
+    <div class="foot-links">
+      <span class="foot-l">Mentions légales</span>
+      <span class="foot-l">Confidentialité</span>
+      <span class="foot-l">CGU</span>
+      <span class="foot-l">Contact</span>
+    </div>
+    <div style="color:var(--muted);font-size:12px">🇫🇷🇲🇦🇩🇿🇹🇳🇧🇪🇨🇦 · Commerçants francophones</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TYPES=[
+  {id:'restaurant',icon:'🍽️',label:'Restaurant',sub:'Gastronomie & Cuisine'},
+  {id:'kebab',icon:'🥙',label:'Kebab / Fast-food',sub:'Sandwichs & Burgers'},
+  {id:'barbershop',icon:'✂️',label:'Barbershop',sub:'Coiffeur & Rasage'},
+  {id:'beauty',icon:'💅',label:'Salon de beauté',sub:'Spa & Esthétique'},
+  {id:'fitness',icon:'💪',label:'Salle de sport',sub:'Fitness & Musculation'},
+  {id:'event',icon:'🎉',label:'Événement',sub:'Soirée & Anniversaire'},
+  {id:'bakery',icon:'🥖',label:'Boulangerie',sub:'Pâtisserie & Café'},
+  {id:'auto',icon:'🚗',label:'Auto / Garage',sub:'Carrosserie & Mécanique'},
+  {id:'fashion',icon:'👗',label:'Boutique mode',sub:'Prêt-à-porter'},
+  {id:'other',icon:'⚡',label:'Autre',sub:'Tout autre commerce'},
+];
+const COUNTRIES=[
+  {code:'FR',flag:'🇫🇷',name:'France'},
+  {code:'MA',flag:'🇲🇦',name:'Maroc'},
+  {code:'DZ',flag:'🇩🇿',name:'Algérie'},
+  {code:'TN',flag:'🇹🇳',name:'Tunisie'},
+  {code:'BE',flag:'🇧🇪',name:'Belgique'},
+  {code:'CA',flag:'🇨🇦',name:'Canada'},
+];
+const FORMATS=[
+  {id:'a5',icon:'🖨️',label:'Flyer A5 Print',dim:'148×210mm'},
+  {id:'story',icon:'📱',label:'Story Instagram',dim:'1080×1920px'},
+  {id:'post',icon:'📸',label:'Post Facebook',dim:'1080×1080px'},
+  {id:'whatsapp',icon:'💬',label:'Flyer WhatsApp',dim:'1080×1920px'},
+  {id:'menu',icon:'📋',label:'Menu A4',dim:'210×297mm'},
+];
+const SEASONS={
+  normal:{label:'Normal',ctx:''},
+  ramadan:{label:'Ramadan',ctx:'Nous sommes en période de Ramadan. Adapte le brief avec un ton chaleureux et communautaire, des références à l\'iftar/suhoor, la baraka, le partage. Couleurs : vert et or. Offres spéciales iftar.'},
+  'aid-fitr':{label:'Aïd el-Fitr',ctx:'C\'est l\'Aïd el-Fitr (fin du Ramadan). Ton festif et joyeux, références aux célébrations et repas familiaux. Offres spéciales Aïd.'},
+  'aid-adha':{label:'Aïd el-Adha',ctx:'C\'est l\'Aïd el-Adha. Ton familial et festif, références au sacrifice, repas traditionnels, viandes. Offres spéciales Aïd el-Kébir.'},
+  ete:{label:'Été',ctx:'C\'est l\'été. Ton dynamique et frais, références aux vacances, terrasses, fraîcheur. Couleurs vives.'},
+  rentree:{label:'Rentrée',ctx:'C\'est la rentrée scolaire/septembre. Ton motivant et énergique, références au retour, nouveaux départs, offres de rentrée.'},
+  fetes:{label:'Fêtes',ctx:'C\'est la période des fêtes de fin d\'année. Ton chaleureux et festif, références à Noël/Nouvel An, cadeaux, réveillon.'},
+};
+
+let selType=null,selFmt='a5',selSeason='normal',lastResult=null;
+
+// Init
+(function(){
+  const k=sessionStorage.getItem('fg_key');
+  if(k)document.getElementById('setup-modal').style.display='none';
+
+  // Build types
+  const g=document.getElementById('types-grid');
+  TYPES.forEach(t=>{
+    const d=document.createElement('div');
+    d.className='type-card';d.id='tc-'+t.id;
+    d.innerHTML=`<span class="type-ico">${t.icon}</span><div class="type-lbl">${t.label}</div><div class="type-sub">${t.sub}</div>`;
+    d.onclick=()=>selectType(t.id);
+    g.appendChild(d);
+  });
+
+  // Build formats
+  const fr=document.getElementById('fmt-row');
+  FORMATS.forEach(f=>{
+    const d=document.createElement('div');
+    d.className='fmt-card'+(f.id==='a5'?' active':'');d.id='fc-'+f.id;
+    d.innerHTML=`<span class="fmt-ico">${f.icon}</span><div><div class="fmt-name">${f.label}</div><div class="fmt-dim">${f.dim}</div></div>`;
+    d.onclick=()=>selectFmt(f.id);
+    fr.appendChild(d);
+  });
+
+  // Build countries
+  const s=document.getElementById('country-sel');
+  COUNTRIES.forEach(c=>{const o=document.createElement('option');o.value=c.code;o.textContent=`${c.flag} ${c.name}`;s.appendChild(o);});
+
+  // Name input
+  document.getElementById('biz-name').addEventListener('input',e=>{
+    document.getElementById('gen-btn').disabled=!e.target.value.trim();
+  });
+  document.getElementById('biz-name').addEventListener('keydown',e=>{if(e.key==='Enter')generate();});
+})();
+
+function saveKey(){
+  const k=document.getElementById('api-key-input').value.trim();
+  if(!k)return;
+  sessionStorage.setItem('fg_key',k);
+  document.getElementById('setup-modal').style.display='none';
+}
+function changeKey(){
+  sessionStorage.removeItem('fg_key');
+  document.getElementById('api-key-input').value='';
+  document.getElementById('setup-modal').style.display='flex';
+}
+function goto(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+function setSeason(el,s){
+  selSeason=s;
+  document.querySelectorAll('.season-btn').forEach(b=>{
+    b.className='season-btn';
+    if(b.dataset.s===s)b.className='season-btn active-'+s.replace('-fitr','').replace('-adha','');
+  });
+}
+function selectType(id){
+  selType=id;
+  document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tc-'+id).classList.add('active');
+  document.getElementById('fmt-block').style.display='block';
+  document.getElementById('form-box').style.display='block';
+  document.getElementById('result').style.display='none';
+}
+function selectFmt(id){
+  selFmt=id;
+  document.querySelectorAll('.fmt-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('fc-'+id).classList.add('active');
+}
+
+async function generate(){
+  const name=document.getElementById('biz-name').value.trim();
+  const country=document.getElementById('country-sel').value;
+  const apiKey=sessionStorage.getItem('fg_key');
+  if(!name||!selType)return;
+  if(!apiKey){changeKey();return;}
+
+  const typeName=TYPES.find(t=>t.id===selType)?.label;
+  const countryName=COUNTRIES.find(c=>c.code===country)?.name;
+  const fmtObj=FORMATS.find(f=>f.id===selFmt);
+  const seasonCtx=SEASONS[selSeason]?.ctx||'';
+
+  document.getElementById('form-box').style.display='none';
+  document.getElementById('fmt-block').style.display='none';
+  document.getElementById('result').style.display='none';
+  document.getElementById('loading').style.display='block';
+  document.getElementById('loading').scrollIntoView({behavior:'smooth'});
+  document.getElementById('err').style.display='none';
+
+  const prompt=`Tu es un expert en marketing créatif et copywriting pour les PME francophones.
+Génère un brief créatif complet pour un flyer "${fmtObj.label}" (${fmtObj.dim}) pour "${name}", ${typeName} en ${countryName}.
+${seasonCtx?'Contexte saisonnier: '+seasonCtx:''}
+
+Réponds UNIQUEMENT avec du JSON valide, sans texte avant/après:
+{
+  "titre": "titre accrocheur max 8 mots percutant",
+  "sousTitre": "sous-titre max 15 mots",
+  "arguments": ["arg1 court percutant","arg2","arg3"],
+  "offre": "offre promotionnelle concrète et spécifique",
+  "cta": "appel à l'action max 5 mots",
+  "palette": [
+    {"hex":"#RRGGBB","nom":"Nom","usage":"Fond principal"},
+    {"hex":"#RRGGBB","nom":"Nom","usage":"Texte & accents"},
+    {"hex":"#RRGGBB","nom":"Nom","usage":"CTA & highlights"}
+  ],
+  "styleVisuel": "description style visuel en une phrase",
+  "toneOfVoice": "2 adjectifs",
+  "accroche": "accroche réseaux sociaux avec emojis max 20 mots",
+  "promptImage": "Midjourney/Firefly prompt in English, realistic, professional, optimized for ${fmtObj.label}, ${fmtObj.dim} format, include style and lighting details, end with --ar appropriate ratio",
+  "conseils": ["conseil format-spécifique 1","conseil 2","conseil 3"]
+}`;
+
+  try{
+    const resp=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1200,messages:[{role:"user",content:prompt}]})
+    });
+    if(!resp.ok){const e=await resp.json();throw new Error(e.error?.message||'Erreur API');}
+    const data=await resp.json();
+    const text=data.content?.find(b=>b.type==='text')?.text||'';
+    const clean=text.replace(/```json|```/g,'').trim();
+    const r=JSON.parse(clean);
+    lastResult={...r,_meta:{name,typeName,countryName,country,fmtLabel:fmtObj.label,season:SEASONS[selSeason].label}};
+    showResult(lastResult);
+  }catch(e){
+    document.getElementById('loading').style.display='none';
+    document.getElementById('fmt-block').style.display='block';
+    document.getElementById('form-box').style.display='block';
+    document.getElementById('err').style.display='block';
+    document.getElementById('err').textContent='⚠️ '+e.message;
+  }
+}
+
+function showResult(r){
+  document.getElementById('loading').style.display='none';
+  const pal=r.palette||[];
+  const grad=pal[0]?.hex||'#1A1A2E';
+  const args=(r.arguments||[]).map(a=>`<div class="arg-item"><div class="arg-ck">✓</div><span class="arg-txt">${a}</span></div>`).join('');
+  const swatches=pal.map(p=>`<div class="swatch-row"><div class="swatch" style="background:${p.hex};box-shadow:0 4px 14px ${p.hex}50"></div><div><div class="swatch-hex">${p.hex}</div><div class="swatch-info">${p.nom} · ${p.usage}</div></div></div>`).join('');
+  const conseils=(r.conseils||[]).map(c=>`<li>${c}</li>`).join('');
+
+  document.getElementById('result').innerHTML=`
+<div class="result-card">
+  <div class="r-header" style="background:linear-gradient(140deg,${grad}44 0%,var(--bg) 100%)">
+    <div class="r-meta">Brief · ${r._meta?.typeName} · ${r._meta?.countryName} · ${r._meta?.fmtLabel} · ${r._meta?.season}</div>
+    <div class="r-title">${r.titre||''}</div>
+    <div class="r-sub">${r.sousTitre||''}</div>
+  </div>
+  <div class="r-body">
+    <div>
+      <div class="rs"><div class="rs-lbl">Arguments clés</div>${args}</div>
+      ${r.offre?`<div class="rs"><div class="rs-lbl">Offre promotionnelle</div><div class="offer-box">🏷️ ${r.offre}</div></div>`:''}
+      <div class="rs"><div class="rs-lbl">Call-to-action</div><div class="cta-pill">${r.cta||''}</div></div>
+      <div class="rs"><div class="rs-lbl">Accroche réseaux sociaux</div><div class="accroche-box">${r.accroche||''}</div></div>
+      ${conseils?`<div class="rs"><div class="rs-lbl">Conseils format</div><ul class="conseils-list">${conseils}</ul></div>`:''}
+    </div>
+    <div>
+      <div class="rs"><div class="rs-lbl">Palette couleurs</div>${swatches}</div>
+      <div class="rs"><div class="rs-lbl">Style visuel</div><p style="color:var(--cream);font-size:14px;line-height:1.6">${r.styleVisuel||''}</p></div>
+      <div class="rs"><div class="rs-lbl">Ton de voix</div><div class="tone-pill">${r.toneOfVoice||''}</div></div>
+      <div class="rs"><div class="rs-lbl">🎨 Prompt Midjourney / Firefly</div><div class="prompt-box">${r.promptImage||''}</div></div>
+    </div>
+  </div>
+  <div class="r-actions">
+    <button class="btn-sm btn-dark" onclick="copyBrief()">📋 Copier brief</button>
+    <button class="btn-sm btn-dark" onclick="downloadBrief()">⬇️ .txt</button>
+    <button class="btn-sm btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+    <button class="btn-sm btn-muted" onclick="reset()">↩ Nouveau</button>
+    <button class="btn-sm btn-red" onclick="goto('tarifs')">Passer Pro →</button>
+  </div>
+</div>`;
+  document.getElementById('result').style.display='block';
+  document.getElementById('result').scrollIntoView({behavior:'smooth'});
+}
+
+function briefText(){
+  const r=lastResult;if(!r)return '';
+  return `BRIEF CRÉATIF FLYERGENIUS
+==========================
+Commerce: ${r._meta?.name}
+Type: ${r._meta?.typeName} | Pays: ${r._meta?.countryName}
+Format: ${r._meta?.fmtLabel} | Saison: ${r._meta?.season}
+
+TITRE: ${r.titre}
+SOUS-TITRE: ${r.sousTitre}
+
+ARGUMENTS:
+${(r.arguments||[]).map((a,i)=>`${i+1}. ${a}`).join('\n')}
+
+OFFRE: ${r.offre||'N/A'}
+CTA: ${r.cta}
+
+ACCROCHE RÉSEAUX:
+${r.accroche}
+
+PALETTE:
+${(r.palette||[]).map(p=>`${p.hex} — ${p.nom} (${p.usage})`).join('\n')}
+
+STYLE: ${r.styleVisuel}
+TON: ${r.toneOfVoice}
+
+PROMPT MIDJOURNEY/FIREFLY:
+${r.promptImage}
+
+CONSEILS FORMAT:
+${(r.conseils||[]).map(c=>`• ${c}`).join('\n')}
+
+— FlyerGenius`;
+}
+function copyBrief(){navigator.clipboard?.writeText(briefText()).then(()=>toast('✅ Brief copié !'));}
+function downloadBrief(){
+  const blob=new Blob([briefText()],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  a.download=`brief-${(lastResult?._meta?.name||'flyer').toLowerCase().replace(/\s+/g,'-')}.txt`;
+  a.click();URL.revokeObjectURL(url);toast('📄 Téléchargé !');
+}
+function shareWA(){
+  const r=lastResult;if(!r)return;
+  const txt=`⚡ *${r.titre}*\n_${r.sousTitre}_\n\n${(r.arguments||[]).map(a=>`✓ ${a}`).join('\n')}\n\n🏷️ ${r.offre||''}\n👉 ${r.cta}\n\n${r.accroche}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
+}
+function reset(){
+  lastResult=null;selType=null;
+  document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('biz-name').value='';
+  document.getElementById('gen-btn').disabled=true;
+  document.getElementById('fmt-block').style.display='none';
+  document.getElementById('form-box').style.display='none';
+  document.getElementById('result').style.display='none';
+  document.getElementById('loading').style.display='none';
+  goto('generator');
+}
+</script>
+</body>
+</html>
