@@ -164,6 +164,15 @@ select option{background:#111118}
 .swatch-info{font-size:11px;color:var(--muted);margin-top:2px}
 .tone-pill{display:inline-flex;background:rgba(255,48,48,.09);border:1px solid rgba(255,48,48,.25);border-radius:7px;padding:7px 13px;color:var(--red);font-weight:600;font-size:13px}
 .prompt-box{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#A0E8B0;line-height:1.7;word-break:break-all}
+.visual-gen-box{margin-top:18px;padding-top:18px;border-top:1px dashed var(--border)}
+.btn-visual{width:100%;background:linear-gradient(120deg,#FF3030,#FF6B20);color:#fff;border:none;padding:13px;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-visual:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn-visual:disabled{background:var(--muted2);cursor:not-allowed;transform:none;filter:none}
+.flyer-canvas-wrap{margin-top:16px;text-align:center;position:relative}
+.flyer-canvas-wrap canvas{max-width:100%;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.5);border:1px solid var(--border)}
+.visual-loading{display:none;align-items:center;justify-content:center;gap:10px;color:var(--muted);font-size:13px;padding:30px 0}
+.visual-actions{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.free-tag{font-size:10px;color:var(--green);font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.25);border-radius:100px;padding:3px 10px;margin-left:8px}
 .conseils-list{list-style:none}
 .conseils-list li{display:flex;gap:8px;font-size:13px;color:var(--muted);margin-bottom:8px;line-height:1.5}
 .conseils-list li::before{content:"→";color:var(--orange);flex-shrink:0}
@@ -530,11 +539,11 @@ const COUNTRIES=[
   {code:'CA',flag:'🇨🇦',name:'Canada'},
 ];
 const FORMATS=[
-  {id:'a5',icon:'🖨️',label:'Flyer A5 Print',dim:'148×210mm'},
-  {id:'story',icon:'📱',label:'Story Instagram',dim:'1080×1920px'},
-  {id:'post',icon:'📸',label:'Post Facebook',dim:'1080×1080px'},
-  {id:'whatsapp',icon:'💬',label:'Flyer WhatsApp',dim:'1080×1920px'},
-  {id:'menu',icon:'📋',label:'Menu A4',dim:'210×297mm'},
+  {id:'a5',icon:'🖨️',label:'Flyer A5 Print',dim:'148×210mm',w:1240,h:1748},
+  {id:'story',icon:'📱',label:'Story Instagram',dim:'1080×1920px',w:1080,h:1920},
+  {id:'post',icon:'📸',label:'Post Facebook',dim:'1080×1080px',w:1080,h:1080},
+  {id:'whatsapp',icon:'💬',label:'Flyer WhatsApp',dim:'1080×1920px',w:1080,h:1920},
+  {id:'menu',icon:'📋',label:'Menu A4',dim:'210×297mm',w:1240,h:1754},
 ];
 const SEASONS={
   normal:{label:'Normal',ctx:''},
@@ -711,6 +720,18 @@ function showResult(r){
       <div class="rs"><div class="rs-lbl">Style visuel</div><p style="color:var(--cream);font-size:14px;line-height:1.6">${r.styleVisuel||''}</p></div>
       <div class="rs"><div class="rs-lbl">Ton de voix</div><div class="tone-pill">${r.toneOfVoice||''}</div></div>
       <div class="rs"><div class="rs-lbl">🎨 Prompt Midjourney / Firefly</div><div class="prompt-box">${r.promptImage||''}</div></div>
+      <div class="visual-gen-box">
+        <div class="rs-lbl" style="display:flex;align-items:center">Générer le visuel <span class="free-tag">Gratuit · Illimité</span></div>
+        <button class="btn-visual" id="visual-btn" onclick="generateVisual()">🖼️ Générer le flyer complet (image)</button>
+        <div class="visual-loading" id="visual-loading"><div class="spin"></div> Composition du flyer en cours…</div>
+        <div class="flyer-canvas-wrap" id="canvas-wrap" style="display:none">
+          <canvas id="flyer-canvas"></canvas>
+          <div class="visual-actions">
+            <button class="btn-sm btn-dark" onclick="downloadVisual()">⬇️ Télécharger le flyer</button>
+            <button class="btn-sm btn-muted" onclick="generateVisual()">🔄 Régénérer</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="r-actions">
@@ -772,6 +793,125 @@ function shareWA(){
   const txt=`⚡ *${r.titre}*\n_${r.sousTitre}_\n\n${(r.arguments||[]).map(a=>`✓ ${a}`).join('\n')}\n\n🏷️ ${r.offre||''}\n👉 ${r.cta}\n\n${r.accroche}`;
   window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
 }
+
+// ---- VISUAL FLYER GENERATION (free, no key — Pollinations.ai) ----
+function wrapLines(ctx,text,maxWidth){
+  const words=text.split(' ');let lines=[],cur='';
+  for(const w of words){
+    const test=cur?cur+' '+w:w;
+    if(ctx.measureText(test).width>maxWidth&&cur){lines.push(cur);cur=w;}
+    else cur=test;
+  }
+  if(cur)lines.push(cur);
+  return lines;
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
+
+async function generateVisual(){
+  const r=lastResult;if(!r)return;
+  const fmtObj=FORMATS.find(f=>f.id===selFmt)||FORMATS[0];
+  const W=fmtObj.w,H=fmtObj.h;
+  const btn=document.getElementById('visual-btn');
+  btn.disabled=true;
+  document.getElementById('canvas-wrap').style.display='none';
+  document.getElementById('visual-loading').style.display='flex';
+
+  const seed=Math.floor(Math.random()*99999);
+  const promptClean=(r.promptImage||r.styleVisuel||r.titre||'flyer design').replace(/--ar[^\s]*/g,'').trim();
+  const imgUrl=`https://image.pollinations.ai/prompt/${encodeURIComponent(promptClean)}?width=${W}&height=${H}&model=flux&nologo=true&seed=${seed}`;
+
+  const canvas=document.getElementById('flyer-canvas');
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+
+  const pal=r.palette||[];
+  const c0=pal[0]?.hex||'#1A1A2E', c1=pal[1]?.hex||'#FFFFFF', c2=pal[2]?.hex||'#FF3030';
+
+  function drawOverlayAndFinish(){
+    // dark gradient overlay bottom for text legibility
+    const grad=ctx.createLinearGradient(0,H*0.42,0,H);
+    grad.addColorStop(0,'rgba(0,0,0,0)');
+    grad.addColorStop(1,'rgba(0,0,0,0.82)');
+    ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+
+    const pad=W*0.07;
+    let y=H*0.78;
+
+    // Titre
+    ctx.fillStyle=c1;ctx.font=`800 ${Math.round(W*0.075)}px Syne, sans-serif`;ctx.textBaseline='top';
+    const titleLines=wrapLines(ctx,(r.titre||'').toUpperCase(),W-pad*2);
+    titleLines.forEach(line=>{ctx.fillText(line,pad,y);y+=W*0.082;});
+    y+=H*0.012;
+
+    // Sous-titre
+    ctx.font=`500 ${Math.round(W*0.032)}px Inter, sans-serif`;ctx.fillStyle='rgba(255,255,255,0.88)';
+    const subLines=wrapLines(ctx,r.sousTitre||'',W-pad*2);
+    subLines.slice(0,2).forEach(line=>{ctx.fillText(line,pad,y);y+=W*0.044;});
+    y+=H*0.018;
+
+    // Offre badge
+    if(r.offre){
+      ctx.font=`700 ${Math.round(W*0.034)}px Inter, sans-serif`;
+      const offreTxt='🏷️ '+r.offre;
+      const tw=ctx.measureText(offreTxt).width;
+      roundRect(ctx,pad,y,Math.min(tw+pad*0.9,W-pad*2),W*0.066,W*0.012);
+      ctx.fillStyle='rgba(255,229,0,0.92)';ctx.fill();
+      ctx.fillStyle='#1A1A0A';ctx.fillText(offreTxt,pad+pad*0.4,y+W*0.016);
+      y+=W*0.066+H*0.02;
+    }
+
+    // CTA pill
+    ctx.font=`800 ${Math.round(W*0.038)}px Inter, sans-serif`;
+    const ctaTxt=(r.cta||'').toUpperCase();
+    const ctw=ctx.measureText(ctaTxt).width;
+    roundRect(ctx,pad,y,ctw+pad*1.1,W*0.078,W*0.014);
+    ctx.fillStyle=c2;ctx.fill();
+    ctx.fillStyle='#FFFFFF';ctx.fillText(ctaTxt,pad+pad*0.5,y+W*0.020);
+
+    // Brand watermark
+    ctx.font=`600 ${Math.round(W*0.022)}px Inter, sans-serif`;ctx.fillStyle='rgba(255,255,255,0.55)';
+    ctx.fillText('⚡ FlyerGenius',pad,H-H*0.035);
+
+    document.getElementById('visual-loading').style.display='none';
+    document.getElementById('canvas-wrap').style.display='block';
+    btn.disabled=false;
+    btn.textContent='🖼️ Générer le flyer complet (image)';
+  }
+
+  const img=new Image();
+  img.crossOrigin='anonymous';
+  img.onload=()=>{
+    // cover-fit draw
+    const ir=img.width/img.height, cr=W/H;
+    let sx=0,sy=0,sw=img.width,sh=img.height;
+    if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2;}else{sh=img.width/cr;sy=(img.height-sh)/2;}
+    ctx.drawImage(img,sx,sy,sw,sh,0,0,W,H);
+    drawOverlayAndFinish();
+  };
+  img.onerror=()=>{
+    // fallback: gradient background if Pollinations is slow/unreachable
+    const g=ctx.createLinearGradient(0,0,W,H);
+    g.addColorStop(0,c0);g.addColorStop(1,'#09090F');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    drawOverlayAndFinish();
+    toast('⚠️ Image IA indisponible, fond dégradé utilisé');
+  };
+  img.src=imgUrl;
+}
+
+function downloadVisual(){
+  const canvas=document.getElementById('flyer-canvas');
+  canvas.toBlob(blob=>{
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;
+    a.download=`flyer-${(lastResult?._meta?.name||'genius').toLowerCase().replace(/\s+/g,'-')}.png`;
+    a.click();URL.revokeObjectURL(url);
+    toast('🖼️ Flyer téléchargé !');
+  },'image/png');
+}
+
 function reset(){
   lastResult=null;selType=null;
   document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('active'));
