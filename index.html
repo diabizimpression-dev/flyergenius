@@ -249,18 +249,6 @@ footer{background:#060609;padding:32px 28px;border-top:1px solid var(--border)}
 </head>
 <body>
 
-<!-- MODAL API KEY -->
-<div class="modal-overlay" id="setup-modal">
-  <div class="modal-box">
-    <div style="font-size:28px;margin-bottom:12px">⚡</div>
-    <h2>Clé API Anthropic</h2>
-    <p>FlyerGenius utilise Claude pour générer vos briefs. Entrez votre clé API pour commencer. Elle est stockée localement dans votre navigateur.</p>
-    <input class="modal-input" id="api-key-input" type="password" placeholder="sk-ant-api03-..."/>
-    <a class="modal-link" href="https://console.anthropic.com/settings/keys" target="_blank">→ Obtenir ma clé sur console.anthropic.com</a>
-    <button class="btn-p" onclick="saveKey()" style="width:100%">Commencer →</button>
-  </div>
-</div>
-
 <!-- NAV -->
 <nav>
   <div style="display:flex;align-items:center;gap:7px">
@@ -270,7 +258,6 @@ footer{background:#060609;padding:32px 28px;border-top:1px solid var(--border)}
   <div class="nav-r">
     <a href="#how" class="nav-link">Comment ça marche</a>
     <a href="#tarifs" class="nav-link">Tarifs</a>
-    <button class="btn-key" onclick="changeKey()">🔑 Clé API</button>
     <button class="btn-p" onclick="goto('generator')" style="padding:8px 16px;font-size:13px">Créer mon brief →</button>
   </div>
 </nav>
@@ -559,9 +546,6 @@ let selType=null,selFmt='a5',selSeason='normal',lastResult=null;
 
 // Init
 (function(){
-  const k=sessionStorage.getItem('fg_key');
-  if(k)document.getElementById('setup-modal').style.display='none';
-
   // Build types
   const g=document.getElementById('types-grid');
   TYPES.forEach(t=>{
@@ -593,17 +577,6 @@ let selType=null,selFmt='a5',selSeason='normal',lastResult=null;
   document.getElementById('biz-name').addEventListener('keydown',e=>{if(e.key==='Enter')generate();});
 })();
 
-function saveKey(){
-  const k=document.getElementById('api-key-input').value.trim();
-  if(!k)return;
-  sessionStorage.setItem('fg_key',k);
-  document.getElementById('setup-modal').style.display='none';
-}
-function changeKey(){
-  sessionStorage.removeItem('fg_key');
-  document.getElementById('api-key-input').value='';
-  document.getElementById('setup-modal').style.display='flex';
-}
 function goto(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
@@ -631,9 +604,7 @@ function selectFmt(id){
 async function generate(){
   const name=document.getElementById('biz-name').value.trim();
   const country=document.getElementById('country-sel').value;
-  const apiKey=sessionStorage.getItem('fg_key');
   if(!name||!selType)return;
-  if(!apiKey){changeKey();return;}
 
   const typeName=TYPES.find(t=>t.id===selType)?.label;
   const countryName=COUNTRIES.find(c=>c.code===country)?.name;
@@ -651,7 +622,7 @@ async function generate(){
 Génère un brief créatif complet pour un flyer "${fmtObj.label}" (${fmtObj.dim}) pour "${name}", ${typeName} en ${countryName}.
 ${seasonCtx?'Contexte saisonnier: '+seasonCtx:''}
 
-Réponds UNIQUEMENT avec du JSON valide, sans texte avant/après:
+Réponds UNIQUEMENT avec du JSON valide, sans texte avant/après, sans balises markdown:
 {
   "titre": "titre accrocheur max 8 mots percutant",
   "sousTitre": "sous-titre max 15 mots",
@@ -670,17 +641,25 @@ Réponds UNIQUEMENT avec du JSON valide, sans texte avant/après:
   "conseils": ["conseil format-spécifique 1","conseil 2","conseil 3"]
 }`;
 
-  try{
-    const resp=await fetch("https://api.anthropic.com/v1/messages",{
+  async function callModel(model){
+    const resp=await fetch("https://text.pollinations.ai/openai",{
       method:"POST",
-      headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1200,messages:[{role:"user",content:prompt}]})
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model,messages:[{role:"user",content:prompt}]})
     });
-    if(!resp.ok){const e=await resp.json();throw new Error(e.error?.message||'Erreur API');}
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
     const data=await resp.json();
-    const text=data.content?.find(b=>b.type==='text')?.text||'';
+    return data.choices?.[0]?.message?.content||'';
+  }
+
+  try{
+    let text='';
+    try{ text=await callModel('openai-large'); }
+    catch(e1){ text=await callModel('openai'); }
     const clean=text.replace(/```json|```/g,'').trim();
-    const r=JSON.parse(clean);
+    const jsonStart=clean.indexOf('{');
+    const jsonEnd=clean.lastIndexOf('}');
+    const r=JSON.parse(clean.slice(jsonStart,jsonEnd+1));
     lastResult={...r,_meta:{name,typeName,countryName,country,fmtLabel:fmtObj.label,season:SEASONS[selSeason].label}};
     showResult(lastResult);
   }catch(e){
@@ -688,7 +667,7 @@ Réponds UNIQUEMENT avec du JSON valide, sans texte avant/après:
     document.getElementById('fmt-block').style.display='block';
     document.getElementById('form-box').style.display='block';
     document.getElementById('err').style.display='block';
-    document.getElementById('err').textContent='⚠️ '+e.message;
+    document.getElementById('err').textContent='⚠️ Service IA temporairement surchargé, réessayez dans quelques secondes.';
   }
 }
 
